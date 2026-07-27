@@ -87,14 +87,13 @@ function AuthPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-6 flex flex-col items-center text-center">
-          <span className="surface-brand mb-3 flex size-14 items-center justify-center rounded-2xl shadow-[var(--shadow-raised)]">
-            <ShieldCheck className="size-7" />
-          </span>
+          <img src={logo} alt="Logo CATEP" className="mb-4 h-20 w-auto" />
           <h1 className="font-display text-2xl font-bold">Gestión CATEP</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Auditoría y control diario de espacios y equipos
           </p>
         </div>
+
 
         <div className="card-elevated p-5">
           <Tabs defaultValue="login">
