@@ -35,9 +35,10 @@ function Inicio() {
     <div className="min-h-screen bg-background">
       <section className="surface-brand px-5 pt-14 pb-20">
         <div className="mx-auto max-w-3xl">
-          <span className="surface-accent mb-5 inline-flex size-12 items-center justify-center rounded-xl">
-            <ShieldCheck className="size-6" />
+          <span className="mb-5 inline-flex items-center justify-center rounded-xl bg-card px-3 py-2">
+            <img src={logo} alt="Logo CATEP" className="h-12 w-auto" />
           </span>
+
           <h1 className="font-display text-3xl leading-tight font-bold sm:text-4xl">
             Gestión CATEP
           </h1>
