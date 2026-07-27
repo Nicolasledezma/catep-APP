@@ -1,10 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, ClipboardList, LayoutGrid, LogOut, ShieldCheck } from "lucide-react";
+import { Bell, ClipboardList, LayoutGrid, LogOut } from "lucide-react";
 import type { ReactNode } from "react";
+import logo from "@/assets/catep-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { usePerfil, useSessionUser } from "@/hooks/use-catep-session";
 import { cn } from "@/lib/utils";
+
 
 const NAV = [
   { to: "/panel", label: "Panel", icon: LayoutGrid },
