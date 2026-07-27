@@ -44,14 +44,15 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="surface-brand sticky top-0 z-30 shadow-[var(--shadow-raised)]">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <Link to="/panel" className="flex items-center gap-2.5">
-            <span className="surface-accent flex size-9 items-center justify-center rounded-lg">
-              <ShieldCheck className="size-5" />
+            <span className="flex h-9 items-center justify-center rounded-lg bg-card px-2">
+              <img src={logo} alt="Logo CATEP" className="h-6 w-auto" />
             </span>
             <span className="leading-tight">
               <span className="block font-display text-base font-bold">Gestión CATEP</span>
               <span className="block text-[11px] opacity-80">Turmero · Empresas Polar</span>
             </span>
           </Link>
+
           <div className="flex items-center gap-2">
             <span className="hidden text-right text-xs leading-tight opacity-90 sm:block">
               <span className="block font-semibold">{perfil?.nombre}</span>
