@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Boxes, Brush, Monitor, NotebookPen, ShieldCheck } from "lucide-react";
+import { Boxes, Brush, Monitor, NotebookPen } from "lucide-react";
+import logo from "@/assets/catep-logo.png";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
