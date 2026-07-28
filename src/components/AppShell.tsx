@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, ClipboardList, LayoutGrid, LogOut } from "lucide-react";
+import { Bell, ClipboardList, LayoutGrid, LogOut, PackageSearch, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import logo from "@/assets/catep-logo.png";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,18 +8,19 @@ import { usePerfil, useSessionUser } from "@/hooks/use-catep-session";
 import { cn } from "@/lib/utils";
 
 
-const NAV = [
-  { to: "/panel", label: "Panel", icon: LayoutGrid },
-  { to: "/historial", label: "Historial", icon: ClipboardList },
-  { to: "/notificaciones", label: "Alertas", icon: Bell },
-];
-
 export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useSessionUser();
   const { data: perfil } = usePerfil(user?.id);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const nav = [
+    { to: "/panel", label: "Panel", icon: LayoutGrid },
+    { to: "/inventario/mesas_trabajo", label: "Inventario", icon: PackageSearch },
+    { to: "/historial", label: "Historial", icon: ClipboardList },
+    { to: "/notificaciones", label: "Alertas", icon: Bell },
+    ...(perfil?.esCoordinador ? [{ to: "/usuarios", label: "Usuarios", icon: Users }] : []),
+  ];
 
   const { data: noLeidas = 0 } = useQuery({
     queryKey: ["notificaciones-no-leidas", user?.id],
@@ -75,8 +76,10 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-3xl">
-          {NAV.map((item) => {
-            const activo = pathname.startsWith(item.to);
+          {nav.map((item) => {
+            const activo =
+              pathname.startsWith(item.to) ||
+              (item.to.startsWith("/inventario") && pathname.startsWith("/inventario"));
             return (
               <Link
                 key={item.to}
