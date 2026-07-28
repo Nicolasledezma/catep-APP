@@ -104,6 +104,8 @@ function NuevaInspeccion() {
     );
   }
 
+  const categoriaDef = def;
+
   function actualizar(key: string, cambios: Partial<ItemForm>) {
     setItems((prev) => prev.map((i) => (i.key === key ? { ...i, ...cambios } : i)));
   }
@@ -111,14 +113,14 @@ function NuevaInspeccion() {
   function cambiarEspacio(valor: string) {
     setEspacioId(valor);
     const espacio = espacios.find((e) => e.id === valor);
-    const nuevos = itemsPorEspacio(def.slug as Categoria, espacio?.nombre);
+    const nuevos = itemsPorEspacio(categoriaDef.slug as Categoria, espacio?.nombre);
     if (nuevos.length > 0) {
       setItems(
         nuevos.map((nombre, i) => ({
           key: `${valor}-${i}`,
           nombre,
           condicion: "operativo" as Condicion,
-          cantidad: def.usaCantidad ? 1 : 1,
+          cantidad: categoriaDef.usaCantidad ? 1 : 1,
           nota: "",
         })),
       );
@@ -136,7 +138,7 @@ function NuevaInspeccion() {
     const { data: inspeccion, error } = await supabase
       .from("inspecciones")
       .insert({
-        categoria: def!.slug,
+        categoria: categoriaDef.slug,
         espacio_id: espacioId,
         user_id: user.id,
         observaciones: observaciones.trim() || null,
@@ -155,7 +157,7 @@ function NuevaInspeccion() {
         inspeccion_id: inspeccion.id,
         nombre: i.nombre.trim().slice(0, 120),
         condicion: i.condicion,
-        cantidad: def!.usaCantidad ? Math.max(0, Math.min(9999, i.cantidad)) : 1,
+        cantidad: categoriaDef.usaCantidad ? Math.max(0, Math.min(9999, i.cantidad)) : 1,
         nota: i.nota.trim().slice(0, 300) || null,
       })),
     );
