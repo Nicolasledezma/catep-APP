@@ -20,11 +20,29 @@ import {
   condicionClase,
   esCondicionCritica,
   getCategoria,
+  itemsPorEspacio,
   type Condicion,
+  type Categoria,
 } from "@/lib/catep";
 import { useSessionUser } from "@/hooks/use-catep-session";
 
 export const Route = createFileRoute("/_authenticated/inspeccion/$categoria")({
+  head: () => ({
+    meta: [
+      { title: "Nueva inspección | Gestión CATEP" },
+      {
+        name: "description",
+        content: "Registro móvil de control diario de aulas, laboratorio, almacén y equipos CATEP.",
+      },
+      { property: "og:title", content: "Nueva inspección | Gestión CATEP" },
+      {
+        property: "og:description",
+        content: "Formulario de auditoría diaria para espacios y equipos del CATEP Turmero.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: NuevaInspeccion,
 });
 
@@ -68,6 +86,8 @@ function NuevaInspeccion() {
     },
   });
 
+  const espacioSeleccionado = espacios.find((e) => e.id === espacioId);
+
   const hayEventualidad = useMemo(
     () => items.some((i) => esCondicionCritica(i.condicion)),
     [items],
@@ -84,8 +104,27 @@ function NuevaInspeccion() {
     );
   }
 
+  const categoriaDef = def;
+
   function actualizar(key: string, cambios: Partial<ItemForm>) {
     setItems((prev) => prev.map((i) => (i.key === key ? { ...i, ...cambios } : i)));
+  }
+
+  function cambiarEspacio(valor: string) {
+    setEspacioId(valor);
+    const espacio = espacios.find((e) => e.id === valor);
+    const nuevos = itemsPorEspacio(categoriaDef.slug as Categoria, espacio?.nombre);
+    if (nuevos.length > 0) {
+      setItems(
+        nuevos.map((nombre, i) => ({
+          key: `${valor}-${i}`,
+          nombre,
+          condicion: "operativo" as Condicion,
+          cantidad: categoriaDef.usaCantidad ? 1 : 1,
+          nota: "",
+        })),
+      );
+    }
   }
 
   async function guardar() {
@@ -99,7 +138,7 @@ function NuevaInspeccion() {
     const { data: inspeccion, error } = await supabase
       .from("inspecciones")
       .insert({
-        categoria: def!.slug,
+        categoria: categoriaDef.slug,
         espacio_id: espacioId,
         user_id: user.id,
         observaciones: observaciones.trim() || null,
@@ -118,7 +157,7 @@ function NuevaInspeccion() {
         inspeccion_id: inspeccion.id,
         nombre: i.nombre.trim().slice(0, 120),
         condicion: i.condicion,
-        cantidad: def!.usaCantidad ? Math.max(0, Math.min(9999, i.cantidad)) : 1,
+        cantidad: categoriaDef.usaCantidad ? Math.max(0, Math.min(9999, i.cantidad)) : 1,
         nota: i.nota.trim().slice(0, 300) || null,
       })),
     );
@@ -156,7 +195,7 @@ function NuevaInspeccion() {
       <section className="card-elevated space-y-4 p-4">
         <div className="space-y-1.5">
           <Label>Espacio inspeccionado</Label>
-          <Select value={espacioId} onValueChange={setEspacioId}>
+          <Select value={espacioId} onValueChange={cambiarEspacio}>
             <SelectTrigger>
               <SelectValue placeholder="Selecciona un espacio" />
             </SelectTrigger>
@@ -169,6 +208,9 @@ function NuevaInspeccion() {
             </SelectContent>
           </Select>
         </div>
+        {espacioSeleccionado && (
+          <p className="text-xs font-semibold text-primary">{espacioSeleccionado.nombre}</p>
+        )}
       </section>
 
       <section className="space-y-3">
@@ -246,7 +288,7 @@ function NuevaInspeccion() {
               <Input
                 value={item.nota}
                 maxLength={300}
-                placeholder="Nota (opcional)"
+                placeholder="Lápiz: escribe qué hay, qué falta o qué hay en gavetas"
                 onChange={(e) => actualizar(item.key, { nota: e.target.value })}
               />
             </div>

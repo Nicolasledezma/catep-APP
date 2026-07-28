@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SEDE_CATEP } from "@/lib/catep";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -36,7 +37,10 @@ const registroSchema = z.object({
   password: z.string().min(6, "Mínimo 6 caracteres").max(72),
 });
 
-const loginSchema = registroSchema.omit({ nombre: true });
+const loginSchema = z.object({
+  email: z.string().trim().email("Correo inválido").max(255),
+  password: z.string().min(1, "Indica tu contraseña").max(72),
+});
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -72,10 +76,7 @@ function AuthPage() {
     const { error } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/panel`,
-        data: { full_name: parsed.data.nombre },
-      },
+      options: { emailRedirectTo: `${window.location.origin}/panel`, data: { full_name: parsed.data.nombre } },
     });
     setCargando(false);
     if (error) return toast.error(error.message);
@@ -91,6 +92,9 @@ function AuthPage() {
           <h1 className="font-display text-2xl font-bold">Gestión CATEP</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Auditoría y control diario de espacios y equipos
+          </p>
+          <p className="mt-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">
+            {SEDE_CATEP}
           </p>
         </div>
 

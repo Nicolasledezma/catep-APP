@@ -1,8 +1,18 @@
 import type { LucideIcon } from "lucide-react";
-import { Boxes, Brush, Monitor, NotebookPen } from "lucide-react";
+import { Boxes, Brush, Hammer, Monitor, NotebookPen, TableProperties, Wrench } from "lucide-react";
 
-export type Categoria = "almacen" | "papeleria" | "limpieza" | "equipos";
+export type Categoria =
+  | "almacen"
+  | "papeleria"
+  | "limpieza"
+  | "equipos"
+  | "mesas_trabajo"
+  | "maquinas_herramientas"
+  | "laboratorio";
 export type Condicion = "operativo" | "observacion" | "averiado" | "faltante";
+export type AppRole = "coordinador" | "aprendiz" | "almacenista";
+export type TipoInventario = "maquinas_herramientas" | "mesas_trabajo" | "almacen" | "papeleria";
+export type EstadoMaterial = "disponible" | "observacion" | "agotado";
 
 export interface CategoriaDef {
   slug: Categoria;
@@ -16,9 +26,54 @@ export interface CategoriaDef {
 
 export const CATEGORIAS: CategoriaDef[] = [
   {
+    slug: "limpieza",
+    titulo: "Control de aulas",
+    descripcion: "Revisión por área de limpieza, mobiliario y equipos.",
+    icon: Brush,
+    etiquetaItem: "Punto",
+    usaCantidad: false,
+    items: [
+      "Mobiliario (sillas y mesas)",
+      "Computadoras (monitor, CPU, mouse, teclado, cables)",
+      "Control de TV",
+      "Observaciones del espacio",
+    ],
+  },
+  {
+    slug: "mesas_trabajo",
+    titulo: "Mesas de trabajo",
+    descripcion: "Inventario de mesas, gavetas y limpieza superficial.",
+    icon: TableProperties,
+    etiquetaItem: "Mesa",
+    usaCantidad: false,
+    items: Array.from({ length: 15 }, (_, i) => `Mesa ${i + 1}`),
+  },
+  {
+    slug: "maquinas_herramientas",
+    titulo: "Máquinas y herramientas",
+    descripcion: "Revisión de cepillo, torno, fresadora y monotorno.",
+    icon: Wrench,
+    etiquetaItem: "Equipo",
+    usaCantidad: false,
+    items: ["Cepillo", "Torno", "Fresadora", "Monotorno"],
+  },
+  {
+    slug: "laboratorio",
+    titulo: "Laboratorio",
+    descripcion: "Pantalla de control para mobiliario, computadoras y TV.",
+    icon: Monitor,
+    etiquetaItem: "Punto",
+    usaCantidad: false,
+    items: [
+      "Mobiliario (sillas y mesas)",
+      "Computadoras (monitor, CPU, mouse, teclado, cables)",
+      "Control de TV",
+    ],
+  },
+  {
     slug: "almacen",
     titulo: "Activos de almacén",
-    descripcion: "Control de los activos utilizados por los aprendices.",
+    descripcion: "Materiales eléctricos, neumáticos, EPP y herramientas.",
     icon: Boxes,
     etiquetaItem: "Activo",
     usaCantidad: true,
@@ -46,40 +101,94 @@ export const CATEGORIAS: CategoriaDef[] = [
     ],
   },
   {
-    slug: "limpieza",
-    titulo: "Control de limpieza",
-    descripcion: "Seguimiento de las actividades de limpieza de espacios.",
-    icon: Brush,
-    etiquetaItem: "Actividad",
-    usaCantidad: false,
-    items: [
-      "Barrido y trapeado de piso",
-      "Limpieza de pupitres y mesas",
-      "Papeleras vaciadas",
-      "Pizarra limpia",
-      "Ventanas y ventilación",
-    ],
-  },
-  {
     slug: "equipos",
-    titulo: "Inventario y operatividad",
-    descripcion: "Estado y funcionamiento de los equipos en las aulas.",
-    icon: Monitor,
+    titulo: "Computación",
+    descripcion: "Control de 18 computadoras, sin control de TV.",
+    icon: Hammer,
     etiquetaItem: "Equipo",
     usaCantidad: true,
     items: [
-      "Videobeam",
-      "Computadora del instructor",
-      "Aire acondicionado",
-      "Iluminación",
-      "Tomacorrientes",
-      "Mobiliario",
+      "18 monitores",
+      "18 CPU",
+      "18 mouse",
+      "18 teclados",
+      "Cables de conexión",
     ],
+  },
+];
+
+export const SEDE_CATEP = "CATEP Gunther Faulhaber - Planta Turmero";
+
+export const INVENTARIOS: {
+  tipo: TipoInventario;
+  titulo: string;
+  descripcion: string;
+  icon: LucideIcon;
+  familias: string[];
+}[] = [
+  {
+    tipo: "maquinas_herramientas",
+    titulo: "Máquinas y herramientas",
+    descripcion: "Torno, fresadora, cepillo y equipos del taller.",
+    icon: Wrench,
+    familias: ["Máquina y herramienta"],
+  },
+  {
+    tipo: "mesas_trabajo",
+    titulo: "Mesas de trabajo",
+    descripcion: "Herramientas declaradas por mesa y gaveta.",
+    icon: TableProperties,
+    familias: ["Mesas de trabajo"],
+  },
+  {
+    tipo: "almacen",
+    titulo: "Almacén",
+    descripcion: "Materiales eléctricos, neumáticos, equipos, consumibles, EPP y herramientas.",
+    icon: Boxes,
+    familias: [
+      "Materiales eléctricos",
+      "Materiales neumáticos",
+      "Equipos e instrumentos",
+      "Consumibles",
+      "EPP",
+      "Herramientas",
+    ],
+  },
+  {
+    tipo: "papeleria",
+    titulo: "Papelería",
+    descripcion: "Productos de coordinación conectados con la base de datos.",
+    icon: NotebookPen,
+    familias: ["Papelería"],
   },
 ];
 
 export function getCategoria(slug: string): CategoriaDef | undefined {
   return CATEGORIAS.find((c) => c.slug === slug);
+}
+
+export function getInventario(tipo: string) {
+  return INVENTARIOS.find((i) => i.tipo === tipo);
+}
+
+export function itemsPorEspacio(categoria: Categoria, espacioNombre?: string) {
+  const nombre = (espacioNombre ?? "").toLowerCase();
+  if (categoria === "limpieza") {
+    if (nombre.includes("biblioteca")) return ["Limpieza general de biblioteca"];
+    if (nombre.includes("computación")) {
+      return [
+        "Mobiliario (sillas y mesas)",
+        "18 computadoras (monitor, CPU, mouse, teclado, cables)",
+      ];
+    }
+    if (nombre.includes("mesas de trabajo")) {
+      return ["Inventario de mesas", "Limpieza superficial", "Herramientas en gavetas"];
+    }
+    if (nombre.includes("máquinas") || nombre.includes("maquinas")) {
+      return ["Cepillo", "Torno", "Fresadora"];
+    }
+  }
+  return getCategoria(categoria)?.items ?? [];
 }
 
 export const CONDICIONES: { value: Condicion; label: string }[] = [
@@ -103,7 +212,7 @@ export function condicionClase(condicion: Condicion) {
     case "observacion":
       return "bg-warning/15 text-warning-foreground border-warning/40";
     case "averiado":
-      return "bg-destructive/12 text-destructive border-destructive/30";
+      return "bg-primary/10 text-primary border-primary/30";
     case "faltante":
       return "bg-muted text-muted-foreground border-border";
   }
