@@ -16,7 +16,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const nav = [
     { to: "/panel", label: "Panel", icon: LayoutGrid },
-    { to: "/inventario/mesas_trabajo", label: "Inventario", icon: PackageSearch },
+    { to: "/inventario/$tipo", params: { tipo: "mesas_trabajo" }, label: "Inventario", icon: PackageSearch },
     { to: "/historial", label: "Historial", icon: ClipboardList },
     { to: "/notificaciones", label: "Alertas", icon: Bell },
     ...(perfil?.esCoordinador ? [{ to: "/usuarios", label: "Usuarios", icon: Users }] : []),
@@ -78,12 +78,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-3xl">
           {nav.map((item) => {
             const activo =
-              pathname.startsWith(item.to) ||
+              pathname.startsWith(item.to.replace("/$tipo", "")) ||
               (item.to.startsWith("/inventario") && pathname.startsWith("/inventario"));
             return (
               <Link
                 key={item.to}
                 to={item.to}
+                params={"params" in item ? item.params : undefined}
                 className={cn(
                   "relative flex flex-1 flex-col items-center gap-1 py-3 text-[11px] font-semibold transition-colors",
                   activo ? "text-primary" : "text-muted-foreground",

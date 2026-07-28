@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 export const updateUserRoles = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -22,7 +23,9 @@ export const updateUserRoles = createServerFn({ method: "POST" })
 
     if (roleError || !ownRole) throw new Error("No autorizado");
 
-    const finalRoles = Array.from(new Set(["aprendiz", ...data.roles]));
+    const finalRoles: Database["public"]["Enums"]["app_role"][] = Array.from(
+      new Set<Database["public"]["Enums"]["app_role"]>(["aprendiz", ...data.roles]),
+    );
     if (data.userId === context.userId && !finalRoles.includes("coordinador")) {
       finalRoles.push("coordinador");
     }

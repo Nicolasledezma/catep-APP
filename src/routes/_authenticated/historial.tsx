@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 import {
   CATEGORIAS,
   CONDICION_LABEL,
@@ -12,12 +13,74 @@ import {
 } from "@/lib/catep";
 
 export const Route = createFileRoute("/_authenticated/historial")({
+  head: () => ({
+    meta: [
+      { title: "Historial y reportes | Gestión CATEP" },
+      {
+        name: "description",
+        content: "Visualiza inspecciones CATEP y descarga reportes semanales de actividades.",
+      },
+      { property: "og:title", content: "Historial y reportes | Gestión CATEP" },
+      {
+        property: "og:description",
+        content: "Trazabilidad y descarga semanal de actividades realizadas por aprendices CATEP.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Historial,
 });
 
 function Historial() {
   const [filtro, setFiltro] = useState<string>("todas");
   const [abierta, setAbierta] = useState<string | null>(null);
+
+  function descargarReporte() {
+    const inicio = new Date();
+    inicio.setDate(inicio.getDate() - 7);
+    const filas = inspecciones
+      .filter((i) => new Date(i.created_at) >= inicio)
+      .flatMap((i) =>
+        i.inspeccion_items.map((item) => ({
+          fecha: formatoFecha(i.created_at),
+          aprendiz: i.autor,
+          categoria: i.categoria,
+          espacio: i.espacios?.nombre ?? "Sin espacio",
+          item: item.nombre,
+          condicion: CONDICION_LABEL[item.condicion as Condicion],
+          cantidad: String(item.cantidad),
+          nota: item.nota ?? "",
+          observaciones: i.observaciones ?? "",
+        })),
+      );
+    const encabezado = [
+      "Fecha",
+      "Aprendiz",
+      "Categoría",
+      "Espacio",
+      "Ítem",
+      "Condición",
+      "Cantidad",
+      "Nota",
+      "Observaciones",
+    ];
+    const csv = [
+      encabezado.join(","),
+      ...filas.map((fila) =>
+        Object.values(fila)
+          .map((valor) => `"${valor.replaceAll('"', '""')}"`)
+          .join(","),
+      ),
+    ].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "reporte-semanal-catep.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   const { data: inspecciones = [], isLoading } = useQuery({
     queryKey: ["historial", filtro],
@@ -48,6 +111,9 @@ function Historial() {
         <p className="text-sm text-muted-foreground">
           Trazabilidad de todas las inspecciones realizadas.
         </p>
+        <Button className="mt-3" size="sm" onClick={descargarReporte} disabled={inspecciones.length === 0}>
+          <Download className="size-4" /> Reporte semanal
+        </Button>
       </header>
 
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
@@ -83,7 +149,7 @@ function Historial() {
                 className="flex w-full items-center gap-3 p-4 text-left"
               >
                 <span
-                  className={`size-2.5 shrink-0 rounded-full ${i.eventualidad ? "bg-destructive" : "bg-success"}`}
+                  className={`size-2.5 shrink-0 rounded-full ${i.eventualidad ? "bg-primary" : "bg-success"}`}
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-bold capitalize">
