@@ -114,6 +114,54 @@ export type Database = {
           },
         ]
       }
+      materiales_inventario: {
+        Row: {
+          activo: boolean
+          cantidad: number
+          created_at: string
+          created_by: string | null
+          descripcion: string | null
+          estado: Database["public"]["Enums"]["estado_material"]
+          familia: string
+          id: string
+          nombre: string
+          tipo: Database["public"]["Enums"]["tipo_inventario"]
+          ubicacion: string | null
+          unidad: string
+          updated_at: string
+        }
+        Insert: {
+          activo?: boolean
+          cantidad?: number
+          created_at?: string
+          created_by?: string | null
+          descripcion?: string | null
+          estado?: Database["public"]["Enums"]["estado_material"]
+          familia?: string
+          id?: string
+          nombre: string
+          tipo: Database["public"]["Enums"]["tipo_inventario"]
+          ubicacion?: string | null
+          unidad?: string
+          updated_at?: string
+        }
+        Update: {
+          activo?: boolean
+          cantidad?: number
+          created_at?: string
+          created_by?: string | null
+          descripcion?: string | null
+          estado?: Database["public"]["Enums"]["estado_material"]
+          familia?: string
+          id?: string
+          nombre?: string
+          tipo?: Database["public"]["Enums"]["tipo_inventario"]
+          ubicacion?: string | null
+          unidad?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notificaciones: {
         Row: {
           created_at: string
@@ -215,6 +263,12 @@ export type Database = {
         | "maquinas_herramientas"
         | "laboratorio"
       condicion_item: "operativo" | "observacion" | "averiado" | "faltante"
+      estado_material: "disponible" | "observacion" | "agotado"
+      tipo_inventario:
+        | "maquinas_herramientas"
+        | "mesas_trabajo"
+        | "almacen"
+        | "papeleria"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -353,6 +407,13 @@ export const Constants = {
         "laboratorio",
       ],
       condicion_item: ["operativo", "observacion", "averiado", "faltante"],
+      estado_material: ["disponible", "observacion", "agotado"],
+      tipo_inventario: [
+        "maquinas_herramientas",
+        "mesas_trabajo",
+        "almacen",
+        "papeleria",
+      ],
     },
   },
 } as const
