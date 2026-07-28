@@ -80,19 +80,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Gestión CATEP" },
+      { title: "Gestión CATEP | Auditoría digital de espacios y equipos" },
       {
         name: "description",
-        content: "Auditoría y control diario de espacios y equipos del CATEP Turmero.",
+        content: "App de auditoría y control diario del Centro de Adiestramiento Técnico Empresas Polar, Turmero: activos, papelería, limpieza y equipos con trazabilidad en tiempo real.",
       },
       { name: "author", content: "CATEP Turmero" },
-      { property: "og:title", content: "Gestión CATEP" },
+      { property: "og:title", content: "Gestión CATEP | Auditoría digital de espacios y equipos" },
       {
         property: "og:description",
-        content: "Auditoría y control diario de espacios y equipos del CATEP Turmero.",
+        content: "App de auditoría y control diario del Centro de Adiestramiento Técnico Empresas Polar, Turmero: activos, papelería, limpieza y equipos con trazabilidad en tiempo real.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Gestión CATEP | Auditoría digital de espacios y equipos" },
+      { name: "twitter:description", content: "App de auditoría y control diario del Centro de Adiestramiento Técnico Empresas Polar, Turmero: activos, papelería, limpieza y equipos con trazabilidad en tiempo real." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/390c9d3a-9e5f-4971-ad53-7ae49c51cd65/id-preview-ebba4cbb--597e50a3-d50b-4be9-81b2-1c814ff6e8b9.lovable.app-1785199326150.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/390c9d3a-9e5f-4971-ad53-7ae49c51cd65/id-preview-ebba4cbb--597e50a3-d50b-4be9-81b2-1c814ff6e8b9.lovable.app-1785199326150.png" },
     ],
     links: [
       {

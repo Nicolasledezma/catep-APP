@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Digitaliza el control diario de activos, limpieza y operatividad de equipos del CATEP Turmero.",
+          "App de auditoría y control diario del Centro de Adiestramiento Técnico Empresas Polar, Turmero: activos, papelería, limpieza y equipos con trazabilidad en tiempo real.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
