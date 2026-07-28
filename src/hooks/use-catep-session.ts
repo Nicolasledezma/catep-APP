@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import type { AppRole } from "@/lib/catep";
 
 export function useSessionUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -35,16 +36,21 @@ export function usePerfil(userId?: string) {
     queryKey: ["perfil", userId],
     enabled: !!userId,
     queryFn: async () => {
+      if (!userId) throw new Error("Usuario no disponible");
       const [{ data: perfil }, { data: roles }] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, email").eq("id", userId!).maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", userId!),
+        supabase.from("profiles").select("id, full_name, email").eq("id", userId).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
-      const esCoordinador = (roles ?? []).some((r) => r.role === "coordinador");
+      const rolesUsuario = (roles ?? []).map((r) => r.role as AppRole);
+      const esCoordinador = rolesUsuario.includes("coordinador");
+      const esAlmacenista = rolesUsuario.includes("almacenista");
       return {
         nombre: perfil?.full_name || perfil?.email || "Usuario",
         email: perfil?.email ?? "",
+        roles: rolesUsuario,
         esCoordinador,
-        rol: esCoordinador ? "Coordinador" : "Aprendiz",
+        esAlmacenista,
+        rol: esCoordinador ? "Coordinador" : esAlmacenista ? "Almacenista" : "Aprendiz",
       };
     },
   });
