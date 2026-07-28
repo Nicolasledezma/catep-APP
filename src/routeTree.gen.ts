@@ -13,9 +13,11 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 import { Route as AuthenticatedNotificacionesRouteImport } from './routes/_authenticated/notificaciones'
 import { Route as AuthenticatedHistorialRouteImport } from './routes/_authenticated/historial'
+import { Route as AuthenticatedInventarioTipoRouteImport } from './routes/_authenticated/inventario.$tipo'
 import { Route as AuthenticatedInspeccionCategoriaRouteImport } from './routes/_authenticated/inspeccion.$categoria'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -37,6 +39,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedUsuariosRoute = AuthenticatedUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
   id: '/panel',
   path: '/panel',
@@ -53,6 +60,12 @@ const AuthenticatedHistorialRoute = AuthenticatedHistorialRouteImport.update({
   path: '/historial',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInventarioTipoRoute =
+  AuthenticatedInventarioTipoRouteImport.update({
+    id: '/inventario/$tipo',
+    path: '/inventario/$tipo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedInspeccionCategoriaRoute =
   AuthenticatedInspeccionCategoriaRouteImport.update({
     id: '/inspeccion/$categoria',
@@ -67,7 +80,9 @@ export interface FileRoutesByFullPath {
   '/historial': typeof AuthenticatedHistorialRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/panel': typeof AuthenticatedPanelRoute
+  '/usuarios': typeof AuthenticatedUsuariosRoute
   '/inspeccion/$categoria': typeof AuthenticatedInspeccionCategoriaRoute
+  '/inventario/$tipo': typeof AuthenticatedInventarioTipoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,7 +91,9 @@ export interface FileRoutesByTo {
   '/historial': typeof AuthenticatedHistorialRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/panel': typeof AuthenticatedPanelRoute
+  '/usuarios': typeof AuthenticatedUsuariosRoute
   '/inspeccion/$categoria': typeof AuthenticatedInspeccionCategoriaRoute
+  '/inventario/$tipo': typeof AuthenticatedInventarioTipoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,7 +104,9 @@ export interface FileRoutesById {
   '/_authenticated/historial': typeof AuthenticatedHistorialRoute
   '/_authenticated/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRoute
+  '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
   '/_authenticated/inspeccion/$categoria': typeof AuthenticatedInspeccionCategoriaRoute
+  '/_authenticated/inventario/$tipo': typeof AuthenticatedInventarioTipoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,7 +117,9 @@ export interface FileRouteTypes {
     | '/historial'
     | '/notificaciones'
     | '/panel'
+    | '/usuarios'
     | '/inspeccion/$categoria'
+    | '/inventario/$tipo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -107,7 +128,9 @@ export interface FileRouteTypes {
     | '/historial'
     | '/notificaciones'
     | '/panel'
+    | '/usuarios'
     | '/inspeccion/$categoria'
+    | '/inventario/$tipo'
   id:
     | '__root__'
     | '/'
@@ -117,7 +140,9 @@ export interface FileRouteTypes {
     | '/_authenticated/historial'
     | '/_authenticated/notificaciones'
     | '/_authenticated/panel'
+    | '/_authenticated/usuarios'
     | '/_authenticated/inspeccion/$categoria'
+    | '/_authenticated/inventario/$tipo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -157,6 +182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/usuarios': {
+      id: '/_authenticated/usuarios'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof AuthenticatedUsuariosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/panel': {
       id: '/_authenticated/panel'
       path: '/panel'
@@ -178,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistorialRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/inventario/$tipo': {
+      id: '/_authenticated/inventario/$tipo'
+      path: '/inventario/$tipo'
+      fullPath: '/inventario/$tipo'
+      preLoaderRoute: typeof AuthenticatedInventarioTipoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/inspeccion/$categoria': {
       id: '/_authenticated/inspeccion/$categoria'
       path: '/inspeccion/$categoria'
@@ -192,14 +231,18 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistorialRoute: typeof AuthenticatedHistorialRoute
   AuthenticatedNotificacionesRoute: typeof AuthenticatedNotificacionesRoute
   AuthenticatedPanelRoute: typeof AuthenticatedPanelRoute
+  AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
   AuthenticatedInspeccionCategoriaRoute: typeof AuthenticatedInspeccionCategoriaRoute
+  AuthenticatedInventarioTipoRoute: typeof AuthenticatedInventarioTipoRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistorialRoute: AuthenticatedHistorialRoute,
   AuthenticatedNotificacionesRoute: AuthenticatedNotificacionesRoute,
   AuthenticatedPanelRoute: AuthenticatedPanelRoute,
+  AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
   AuthenticatedInspeccionCategoriaRoute: AuthenticatedInspeccionCategoriaRoute,
+  AuthenticatedInventarioTipoRoute: AuthenticatedInventarioTipoRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
