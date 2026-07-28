@@ -205,8 +205,15 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "coordinador" | "aprendiz"
-      categoria_inspeccion: "almacen" | "papeleria" | "limpieza" | "equipos"
+      app_role: "coordinador" | "aprendiz" | "almacenista"
+      categoria_inspeccion:
+        | "almacen"
+        | "papeleria"
+        | "limpieza"
+        | "equipos"
+        | "mesas_trabajo"
+        | "maquinas_herramientas"
+        | "laboratorio"
       condicion_item: "operativo" | "observacion" | "averiado" | "faltante"
     }
     CompositeTypes: {
@@ -335,8 +342,16 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["coordinador", "aprendiz"],
-      categoria_inspeccion: ["almacen", "papeleria", "limpieza", "equipos"],
+      app_role: ["coordinador", "aprendiz", "almacenista"],
+      categoria_inspeccion: [
+        "almacen",
+        "papeleria",
+        "limpieza",
+        "equipos",
+        "mesas_trabajo",
+        "maquinas_herramientas",
+        "laboratorio",
+      ],
       condicion_item: ["operativo", "observacion", "averiado", "faltante"],
     },
   },
