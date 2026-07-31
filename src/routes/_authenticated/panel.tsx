@@ -63,6 +63,19 @@ function Panel() {
     },
   });
 
+  const { data: espacios, isLoading: cargandoEspacios } = useQuery({
+    queryKey: ["espacios-lista", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("espacios")
+        .select("id, nombre, tipo, activo")
+        .order("nombre");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   return (
     <div className="space-y-6">
       <section>
