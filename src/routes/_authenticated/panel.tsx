@@ -63,6 +63,19 @@ function Panel() {
     },
   });
 
+  const { data: espacios, isLoading: cargandoEspacios } = useQuery({
+    queryKey: ["espacios-lista", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("espacios")
+        .select("id, nombre, tipo, activo")
+        .order("nombre");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   return (
     <div className="space-y-6">
       <section>
@@ -87,8 +100,32 @@ function Panel() {
 
       <section>
         <h2 className="mb-3 text-sm font-bold tracking-wide text-muted-foreground uppercase">
+          Espacios registrados
+        </h2>
+        <div className="card-elevated divide-y divide-border">
+          {cargandoEspacios && <p className="p-4 text-sm text-muted-foreground">Cargando…</p>}
+          {!cargandoEspacios && (espacios ?? []).length === 0 && (
+            <p className="p-4 text-sm text-muted-foreground">No hay espacios registrados.</p>
+          )}
+          {(espacios ?? []).map((e) => (
+            <div key={e.id} className="flex items-center justify-between gap-3 p-3">
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold">{e.nombre}</span>
+                <span className="block text-xs text-muted-foreground capitalize">{e.tipo}</span>
+              </span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                {e.activo ? "Activo" : "Inactivo"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-bold tracking-wide text-muted-foreground uppercase">
           Nueva inspección
         </h2>
+
         <div className="grid gap-3 sm:grid-cols-2">
           {CATEGORIAS.map((cat) => (
             <Link
