@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, ClipboardList, LayoutGrid, LogOut, PackageSearch, Users } from "lucide-react";
+import { Bell, ClipboardList, LayoutGrid, LogOut, PackageSearch, UserRound, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import logo from "@/assets/catep-logo.png";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,10 +57,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
 
           <div className="flex items-center gap-2">
-            <span className="hidden text-right text-xs leading-tight opacity-90 sm:block">
-              <span className="block font-semibold">{perfil?.nombre}</span>
-              <span className="block opacity-75">{perfil?.rol}</span>
-            </span>
+            <Link
+              to="/perfil"
+              aria-label="Mi perfil"
+              className="flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-sidebar-accent"
+            >
+              <UserRound className="size-4" />
+              <span className="hidden text-right text-xs leading-tight opacity-90 sm:block">
+                <span className="block font-semibold">{perfil?.nombre}</span>
+                <span className="block opacity-75">{perfil?.rol}</span>
+              </span>
+            </Link>
             <button
               onClick={cerrarSesion}
               aria-label="Cerrar sesión"
