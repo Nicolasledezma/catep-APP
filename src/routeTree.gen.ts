@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 import { Route as AuthenticatedNotificacionesRouteImport } from './routes/_authenticated/notificaciones'
 import { Route as AuthenticatedHistorialRouteImport } from './routes/_authenticated/historial'
@@ -48,6 +49,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedUsuariosRoute = AuthenticatedUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/historial': typeof AuthenticatedHistorialRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/panel': typeof AuthenticatedPanelRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/inspeccion/$categoria': typeof AuthenticatedInspeccionCategoriaRoute
   '/inventario/$tipo': typeof AuthenticatedInventarioTipoRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/historial': typeof AuthenticatedHistorialRoute
   '/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/panel': typeof AuthenticatedPanelRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/inspeccion/$categoria': typeof AuthenticatedInspeccionCategoriaRoute
   '/inventario/$tipo': typeof AuthenticatedInventarioTipoRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated/historial': typeof AuthenticatedHistorialRoute
   '/_authenticated/notificaciones': typeof AuthenticatedNotificacionesRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
   '/_authenticated/inspeccion/$categoria': typeof AuthenticatedInspeccionCategoriaRoute
   '/_authenticated/inventario/$tipo': typeof AuthenticatedInventarioTipoRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/historial'
     | '/notificaciones'
     | '/panel'
+    | '/perfil'
     | '/usuarios'
     | '/inspeccion/$categoria'
     | '/inventario/$tipo'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/historial'
     | '/notificaciones'
     | '/panel'
+    | '/perfil'
     | '/usuarios'
     | '/inspeccion/$categoria'
     | '/inventario/$tipo'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/_authenticated/historial'
     | '/_authenticated/notificaciones'
     | '/_authenticated/panel'
+    | '/_authenticated/perfil'
     | '/_authenticated/usuarios'
     | '/_authenticated/inspeccion/$categoria'
     | '/_authenticated/inventario/$tipo'
@@ -209,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsuariosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/panel': {
       id: '/_authenticated/panel'
       path: '/panel'
@@ -251,6 +270,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistorialRoute: typeof AuthenticatedHistorialRoute
   AuthenticatedNotificacionesRoute: typeof AuthenticatedNotificacionesRoute
   AuthenticatedPanelRoute: typeof AuthenticatedPanelRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
   AuthenticatedInspeccionCategoriaRoute: typeof AuthenticatedInspeccionCategoriaRoute
   AuthenticatedInventarioTipoRoute: typeof AuthenticatedInventarioTipoRoute
@@ -260,6 +280,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistorialRoute: AuthenticatedHistorialRoute,
   AuthenticatedNotificacionesRoute: AuthenticatedNotificacionesRoute,
   AuthenticatedPanelRoute: AuthenticatedPanelRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
   AuthenticatedInspeccionCategoriaRoute: AuthenticatedInspeccionCategoriaRoute,
   AuthenticatedInventarioTipoRoute: AuthenticatedInventarioTipoRoute,
