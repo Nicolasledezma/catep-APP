@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, ClipboardList, LayoutGrid, LogOut, PackageSearch, Users } from "lucide-react";
+import { Bell, ClipboardList, LayoutGrid, LogOut, PackageSearch, UserRound, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import logo from "@/assets/catep-logo.png";
 import { supabase } from "@/integrations/supabase/client";
