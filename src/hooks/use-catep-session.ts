@@ -37,16 +37,24 @@ export function usePerfil(userId?: string) {
     enabled: !!userId,
     queryFn: async () => {
       if (!userId) throw new Error("Usuario no disponible");
-      const [{ data: perfil }, { data: roles }] = await Promise.all([
+      const [{ data: perfil }, { data: roles }, { data: auth }] = await Promise.all([
         supabase.from("profiles").select("id, full_name, email").eq("id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
+        supabase.auth.getUser(),
       ]);
+      const metaNombre = (auth?.user?.user_metadata?.full_name as string | undefined)?.trim();
+
+      // Rellena el nombre en el perfil si quedó vacío al registrarse.
+      if (!perfil?.full_name && metaNombre) {
+        await supabase.from("profiles").update({ full_name: metaNombre }).eq("id", userId);
+      }
+
       const rolesUsuario = (roles ?? []).map((r) => r.role as AppRole);
       const esCoordinador = rolesUsuario.includes("coordinador");
       const esAlmacenista = rolesUsuario.includes("almacenista");
       return {
-        nombre: perfil?.full_name || perfil?.email || "Usuario",
-        email: perfil?.email ?? "",
+        nombre: perfil?.full_name || metaNombre || perfil?.email || "Usuario",
+        email: perfil?.email ?? auth?.user?.email ?? "",
         roles: rolesUsuario,
         esCoordinador,
         esAlmacenista,
