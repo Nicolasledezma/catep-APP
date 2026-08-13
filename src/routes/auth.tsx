@@ -80,7 +80,7 @@ function AuthPage() {
       options: { emailRedirectTo: `${window.location.origin}/panel`, data: { full_name: parsed.data.nombre } },
     });
     setCargando(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(mensajeAuth(error.message));
     toast.success("Cuenta creada. Ya puedes ingresar.");
     navigate({ to: "/panel" });
   }
