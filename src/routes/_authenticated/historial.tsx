@@ -36,10 +36,22 @@ function Historial() {
   const [filtro, setFiltro] = useState<string>("todas");
   const [abierta, setAbierta] = useState<string | null>(null);
 
-  function descargarReporte() {
+  const encabezado = [
+    "Fecha",
+    "Aprendiz",
+    "Categoría",
+    "Espacio",
+    "Ítem",
+    "Condición",
+    "Cantidad",
+    "Nota",
+    "Observaciones",
+  ];
+
+  function filasSemana() {
     const inicio = new Date();
     inicio.setDate(inicio.getDate() - 7);
-    const filas = inspecciones
+    return inspecciones
       .filter((i) => new Date(i.created_at) >= inicio)
       .flatMap((i) =>
         i.inspeccion_items.map((item) => ({
@@ -54,17 +66,31 @@ function Historial() {
           observaciones: i.observaciones ?? "",
         })),
       );
-    const encabezado = [
-      "Fecha",
-      "Aprendiz",
-      "Categoría",
-      "Espacio",
-      "Ítem",
-      "Condición",
-      "Cantidad",
-      "Nota",
-      "Observaciones",
-    ];
+  }
+
+  async function descargarPDF() {
+    const filas = filasSemana();
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    doc.setFontSize(14);
+    doc.text("Reporte semanal de actividades · Gestión CATEP", 40, 40);
+    doc.setFontSize(9);
+    doc.text(SEDE_CATEP, 40, 56);
+    doc.text(`Generado: ${formatoFecha(new Date().toISOString())}`, 40, 70);
+    autoTable(doc, {
+      head: [encabezado],
+      body: filas.map((f) => Object.values(f)),
+      startY: 84,
+      styles: { fontSize: 7, cellPadding: 3, overflow: "linebreak" },
+      headStyles: { fillColor: [11, 61, 145], textColor: 255 },
+      alternateRowStyles: { fillColor: [242, 245, 250] },
+    });
+    doc.save("reporte-semanal-catep.pdf");
+  }
+
+  function descargarReporte() {
+    const filas = filasSemana();
     const csv = [
       encabezado.join(","),
       ...filas.map((fila) =>
