@@ -138,9 +138,19 @@ function Historial() {
         <p className="text-sm text-muted-foreground">
           Trazabilidad de todas las inspecciones realizadas.
         </p>
-        <Button className="mt-3" size="sm" onClick={descargarReporte} disabled={inspecciones.length === 0}>
-          <Download className="size-4" /> Reporte semanal
-        </Button>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button size="sm" onClick={descargarPDF} disabled={inspecciones.length === 0}>
+            <FileText className="size-4" /> Reporte semanal PDF
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={descargarReporte}
+            disabled={inspecciones.length === 0}
+          >
+            <Download className="size-4" /> Descargar CSV
+          </Button>
+        </div>
       </header>
 
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
