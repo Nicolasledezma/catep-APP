@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/catep-logo.png";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -126,13 +126,12 @@ function AuthPage() {
                 <Button type="submit" className="w-full" disabled={cargando}>
                   {cargando ? "Verificando…" : "Ingresar"}
                 </Button>
-                <button
-                  type="button"
-                  onClick={recuperarContrasena}
-                  className="w-full text-center text-xs font-semibold text-primary underline-offset-2 hover:underline"
+                <Link
+                  to="/recuperar"
+                  className="block w-full text-center text-xs font-semibold text-primary underline-offset-2 hover:underline"
                 >
                   ¿Olvidaste tu contraseña?
-                </button>
+                </Link>
               </form>
             </TabsContent>
 
