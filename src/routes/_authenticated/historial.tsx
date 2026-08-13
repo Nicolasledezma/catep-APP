@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, Download } from "lucide-react";
+import { ChevronDown, Download, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   CATEGORIAS,
   CONDICION_LABEL,
+  SEDE_CATEP,
   condicionClase,
   formatoFecha,
   type Condicion,
@@ -36,10 +37,22 @@ function Historial() {
   const [filtro, setFiltro] = useState<string>("todas");
   const [abierta, setAbierta] = useState<string | null>(null);
 
-  function descargarReporte() {
+  const encabezado = [
+    "Fecha",
+    "Aprendiz",
+    "Categoría",
+    "Espacio",
+    "Ítem",
+    "Condición",
+    "Cantidad",
+    "Nota",
+    "Observaciones",
+  ];
+
+  function filasSemana() {
     const inicio = new Date();
     inicio.setDate(inicio.getDate() - 7);
-    const filas = inspecciones
+    return inspecciones
       .filter((i) => new Date(i.created_at) >= inicio)
       .flatMap((i) =>
         i.inspeccion_items.map((item) => ({
@@ -54,17 +67,31 @@ function Historial() {
           observaciones: i.observaciones ?? "",
         })),
       );
-    const encabezado = [
-      "Fecha",
-      "Aprendiz",
-      "Categoría",
-      "Espacio",
-      "Ítem",
-      "Condición",
-      "Cantidad",
-      "Nota",
-      "Observaciones",
-    ];
+  }
+
+  async function descargarPDF() {
+    const filas = filasSemana();
+    const { default: jsPDF } = await import("jspdf");
+    const { default: autoTable } = await import("jspdf-autotable");
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    doc.setFontSize(14);
+    doc.text("Reporte semanal de actividades · Gestión CATEP", 40, 40);
+    doc.setFontSize(9);
+    doc.text(SEDE_CATEP, 40, 56);
+    doc.text(`Generado: ${formatoFecha(new Date().toISOString())}`, 40, 70);
+    autoTable(doc, {
+      head: [encabezado],
+      body: filas.map((f) => Object.values(f)),
+      startY: 84,
+      styles: { fontSize: 7, cellPadding: 3, overflow: "linebreak" },
+      headStyles: { fillColor: [11, 61, 145], textColor: 255 },
+      alternateRowStyles: { fillColor: [242, 245, 250] },
+    });
+    doc.save("reporte-semanal-catep.pdf");
+  }
+
+  function descargarReporte() {
+    const filas = filasSemana();
     const csv = [
       encabezado.join(","),
       ...filas.map((fila) =>
@@ -111,9 +138,19 @@ function Historial() {
         <p className="text-sm text-muted-foreground">
           Trazabilidad de todas las inspecciones realizadas.
         </p>
-        <Button className="mt-3" size="sm" onClick={descargarReporte} disabled={inspecciones.length === 0}>
-          <Download className="size-4" /> Reporte semanal
-        </Button>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button size="sm" onClick={descargarPDF} disabled={inspecciones.length === 0}>
+            <FileText className="size-4" /> Reporte semanal PDF
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={descargarReporte}
+            disabled={inspecciones.length === 0}
+          >
+            <Download className="size-4" /> Descargar CSV
+          </Button>
+        </div>
       </header>
 
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
