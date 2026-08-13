@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/catep-logo.png";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -62,19 +62,6 @@ function AuthPage() {
     navigate({ to: "/panel" });
   }
 
-  async function recuperarContrasena() {
-    const email = window.prompt("Escribe tu correo para enviarte el enlace de recuperación:")?.trim();
-    if (!email) return;
-    const parsed = z.string().trim().email().max(255).safeParse(email);
-    if (!parsed.success) return toast.error("Correo inválido");
-    setCargando(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    setCargando(false);
-    if (error) return toast.error("No se pudo enviar el correo de recuperación");
-    toast.success("Te enviamos un enlace para restablecer tu contraseña");
-  }
 
   async function registrar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -139,13 +126,12 @@ function AuthPage() {
                 <Button type="submit" className="w-full" disabled={cargando}>
                   {cargando ? "Verificando…" : "Ingresar"}
                 </Button>
-                <button
-                  type="button"
-                  onClick={recuperarContrasena}
-                  className="w-full text-center text-xs font-semibold text-primary underline-offset-2 hover:underline"
+                <Link
+                  to="/recuperar"
+                  className="block w-full text-center text-xs font-semibold text-primary underline-offset-2 hover:underline"
                 >
                   ¿Olvidaste tu contraseña?
-                </button>
+                </Link>
               </form>
             </TabsContent>
 
