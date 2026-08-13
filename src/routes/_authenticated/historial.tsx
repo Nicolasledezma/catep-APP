@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   CATEGORIAS,
   CONDICION_LABEL,
+  SEDE_CATEP,
   condicionClase,
   formatoFecha,
   type Condicion,
