@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SEDE_CATEP } from "@/lib/catep";
+import { mensajeAuth } from "@/lib/auth-mensajes";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -80,7 +81,7 @@ function AuthPage() {
       options: { emailRedirectTo: `${window.location.origin}/panel`, data: { full_name: parsed.data.nombre } },
     });
     setCargando(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(mensajeAuth(error.message));
     toast.success("Cuenta creada. Ya puedes ingresar.");
     navigate({ to: "/panel" });
   }
