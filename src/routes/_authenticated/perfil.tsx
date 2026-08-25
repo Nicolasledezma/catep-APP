@@ -113,9 +113,39 @@ function PerfilPage() {
 
       <section className="card-elevated space-y-3 p-4">
         <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-bold">{perfil?.nombre ?? "—"}</p>
-            <p className="truncate text-xs text-muted-foreground">{perfil?.email}</p>
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="relative">
+              <span className="flex size-14 items-center justify-center overflow-hidden rounded-full bg-secondary text-secondary-foreground">
+                {perfil?.avatarUrl ? (
+                  <img src={perfil.avatarUrl} alt={`Foto de ${perfil.nombre}`} className="size-full object-cover" />
+                ) : (
+                  <UserRound className="size-6" />
+                )}
+              </span>
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={subiendo}
+                aria-label="Cambiar foto de perfil"
+                className="absolute -right-1 -bottom-1 rounded-full bg-primary p-1.5 text-primary-foreground shadow-sm disabled:opacity-60"
+              >
+                <Camera className="size-3.5" />
+              </button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={subirFoto}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold">{perfil?.nombre ?? "—"}</p>
+              <p className="truncate text-xs text-muted-foreground">{perfil?.email}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {subiendo ? "Subiendo foto…" : "JPG o PNG, máx. 5 MB"}
+              </p>
+            </div>
           </div>
           <Badge variant="secondary">{perfil?.rol ?? "—"}</Badge>
         </div>
