@@ -41,10 +41,37 @@ function PerfilPage() {
   const navigate = useNavigate();
   const [nombre, setNombre] = useState("");
   const [guardando, setGuardando] = useState(false);
+  const [subiendo, setSubiendo] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (perfil?.nombre) setNombre(perfil.nombre);
   }, [perfil?.nombre]);
+
+  async function subirFoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !user) return;
+    if (!file.type.startsWith("image/")) return toast.error("Selecciona una imagen válida");
+    if (file.size > 5 * 1024 * 1024) return toast.error("La imagen no debe superar 5 MB");
+
+    setSubiendo(true);
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${user.id}/avatar.${ext}`;
+    const { error: subidaError } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (subidaError) {
+      setSubiendo(false);
+      return toast.error("No se pudo subir la foto");
+    }
+    const { error } = await supabase.from("profiles").update({ avatar_url: path }).eq("id", user.id);
+    setSubiendo(false);
+    if (error) return toast.error("No se pudo guardar la foto en tu perfil");
+    toast.success("Foto de perfil actualizada");
+    queryClient.invalidateQueries({ queryKey: ["perfil"] });
+  }
+
 
   async function guardarNombre() {
     if (!user) return;
