@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { KeyRound, LogOut, Save, Users } from "lucide-react";
+import { Camera, KeyRound, LogOut, Save, UserRound, Users } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,10 +41,37 @@ function PerfilPage() {
   const navigate = useNavigate();
   const [nombre, setNombre] = useState("");
   const [guardando, setGuardando] = useState(false);
+  const [subiendo, setSubiendo] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (perfil?.nombre) setNombre(perfil.nombre);
   }, [perfil?.nombre]);
+
+  async function subirFoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !user) return;
+    if (!file.type.startsWith("image/")) return toast.error("Selecciona una imagen válida");
+    if (file.size > 5 * 1024 * 1024) return toast.error("La imagen no debe superar 5 MB");
+
+    setSubiendo(true);
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${user.id}/avatar.${ext}`;
+    const { error: subidaError } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (subidaError) {
+      setSubiendo(false);
+      return toast.error("No se pudo subir la foto");
+    }
+    const { error } = await supabase.from("profiles").update({ avatar_url: path }).eq("id", user.id);
+    setSubiendo(false);
+    if (error) return toast.error("No se pudo guardar la foto en tu perfil");
+    toast.success("Foto de perfil actualizada");
+    queryClient.invalidateQueries({ queryKey: ["perfil"] });
+  }
+
 
   async function guardarNombre() {
     if (!user) return;
@@ -86,9 +113,39 @@ function PerfilPage() {
 
       <section className="card-elevated space-y-3 p-4">
         <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-bold">{perfil?.nombre ?? "—"}</p>
-            <p className="truncate text-xs text-muted-foreground">{perfil?.email}</p>
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="relative">
+              <span className="flex size-14 items-center justify-center overflow-hidden rounded-full bg-secondary text-secondary-foreground">
+                {perfil?.avatarUrl ? (
+                  <img src={perfil.avatarUrl} alt={`Foto de ${perfil.nombre}`} className="size-full object-cover" />
+                ) : (
+                  <UserRound className="size-6" />
+                )}
+              </span>
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={subiendo}
+                aria-label="Cambiar foto de perfil"
+                className="absolute -right-1 -bottom-1 rounded-full bg-primary p-1.5 text-primary-foreground shadow-sm disabled:opacity-60"
+              >
+                <Camera className="size-3.5" />
+              </button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={subirFoto}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold">{perfil?.nombre ?? "—"}</p>
+              <p className="truncate text-xs text-muted-foreground">{perfil?.email}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {subiendo ? "Subiendo foto…" : "JPG o PNG, máx. 5 MB"}
+              </p>
+            </div>
           </div>
           <Badge variant="secondary">{perfil?.rol ?? "—"}</Badge>
         </div>

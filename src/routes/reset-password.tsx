@@ -5,8 +5,8 @@ import { z } from "zod";
 import logo from "@/assets/catep-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/PasswordInput";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
@@ -89,11 +89,12 @@ function ResetPasswordPage() {
           <form onSubmit={guardar} className="space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="password">Contraseña</Label>
-              <Input id="password" name="password" type="password" required maxLength={72} />
+              <PasswordInput id="password" name="password" required maxLength={72} autoComplete="new-password" />
+              <p className="text-[11px] text-muted-foreground">Mínimo 6 caracteres.</p>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="confirmar">Confirmar contraseña</Label>
-              <Input id="confirmar" name="confirmar" type="password" required maxLength={72} />
+              <PasswordInput id="confirmar" name="confirmar" required maxLength={72} autoComplete="new-password" />
             </div>
             <Button type="submit" className="w-full" disabled={cargando}>
               {cargando ? "Guardando…" : "Guardar contraseña"}

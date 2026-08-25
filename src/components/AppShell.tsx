@@ -62,7 +62,13 @@ export function AppShell({ children }: { children: ReactNode }) {
               aria-label="Mi perfil"
               className="flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-sidebar-accent"
             >
-              <UserRound className="size-4" />
+              <span className="flex size-7 items-center justify-center overflow-hidden rounded-full bg-card/20">
+                {perfil?.avatarUrl ? (
+                  <img src={perfil.avatarUrl} alt="Foto de perfil" className="size-full object-cover" />
+                ) : (
+                  <UserRound className="size-4" />
+                )}
+              </span>
               <span className="hidden text-right text-xs leading-tight opacity-90 sm:block">
                 <span className="block font-semibold">{perfil?.nombre}</span>
                 <span className="block opacity-75">{perfil?.rol}</span>

@@ -38,7 +38,7 @@ export function usePerfil(userId?: string) {
     queryFn: async () => {
       if (!userId) throw new Error("Usuario no disponible");
       const [{ data: perfil }, { data: roles }, { data: auth }] = await Promise.all([
-        supabase.from("profiles").select("id, full_name, email").eq("id", userId).maybeSingle(),
+        supabase.from("profiles").select("id, full_name, email, avatar_url").eq("id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
         supabase.auth.getUser(),
       ]);
@@ -49,12 +49,21 @@ export function usePerfil(userId?: string) {
         await supabase.from("profiles").update({ full_name: metaNombre }).eq("id", userId);
       }
 
+      let avatarUrl: string | null = null;
+      if (perfil?.avatar_url) {
+        const { data: firmada } = await supabase.storage
+          .from("avatars")
+          .createSignedUrl(perfil.avatar_url, 60 * 60);
+        avatarUrl = firmada?.signedUrl ?? null;
+      }
+
       const rolesUsuario = (roles ?? []).map((r) => r.role as AppRole);
       const esCoordinador = rolesUsuario.includes("coordinador");
       const esAlmacenista = rolesUsuario.includes("almacenista");
       return {
         nombre: perfil?.full_name || metaNombre || perfil?.email || "Usuario",
         email: perfil?.email ?? auth?.user?.email ?? "",
+        avatarUrl,
         roles: rolesUsuario,
         esCoordinador,
         esAlmacenista,
