@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SEDE_CATEP } from "@/lib/catep";
 import { mensajeAuth } from "@/lib/auth-mensajes";
@@ -116,12 +117,12 @@ function AuthPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="login-password">Contraseña</Label>
-                  <Input
+                  <PasswordInput
                     id="login-password"
                     name="password"
-                    type="password"
                     required
                     maxLength={72}
+                    autoComplete="current-password"
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={cargando}>
@@ -148,7 +149,14 @@ function AuthPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="reg-password">Contraseña</Label>
-                  <Input id="reg-password" name="password" type="password" required maxLength={72} />
+                  <PasswordInput
+                    id="reg-password"
+                    name="password"
+                    required
+                    maxLength={72}
+                    autoComplete="new-password"
+                  />
+                  <p className="text-[11px] text-muted-foreground">Mínimo 6 caracteres.</p>
                 </div>
                 <Button type="submit" className="w-full" disabled={cargando}>
                   {cargando ? "Creando cuenta…" : "Crear cuenta"}
